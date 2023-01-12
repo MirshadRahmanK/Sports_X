@@ -9,4 +9,5 @@
 <img src="demo/Screenshot_1673490757 - Copy.png" width="300px" height="auto">
 
 ## Download
-<a id="raw-url" href="https://github.com/MirshadRahmanK/Sports_X/blob/main/demo/app-release.apk">Download FILE</a>
+<a href="demo/app-release.apk" download>Click to Download</a>
+
