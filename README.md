@@ -1,4 +1,4 @@
-# sports_score
+# Sports_X
 
 ⚽A football score  app 📱 built using Flutter and integrated sports API to display score details 
 
