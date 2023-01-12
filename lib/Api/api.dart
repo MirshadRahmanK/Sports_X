@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final channel = channelFromJson(jsonString);
-
 import 'dart:convert';
 
 Channel? channelFromJson(String str) => Channel.fromJson(json.decode(str));
