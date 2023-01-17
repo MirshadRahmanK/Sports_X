@@ -66,7 +66,7 @@ class _TableScreenState extends State<TableScreen> {
                 ],
               )
             : Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(color: Colors.yellow),
               ));
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -18,115 +19,147 @@ class FootBallScreen extends StatefulWidget {
 class _FootBallScreenState extends State<FootBallScreen> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20),
-      child: Column(children: [
-        SizedBox(
-          height: 20,
-        ),
-        Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              child: Image(
-                image: AssetImage('assets/messi.jpg'),
-                fit: BoxFit.cover,
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('Score').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('NowPlaying')
+                    .snapshots(),
+                builder: (context, nowPlaying) {
+                  if (nowPlaying.hasData) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 20),
+                      child: Column(children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                              child: Image(
+                                image: AssetImage('assets/messi.jpg'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 110, left: 20),
+                              child: Container(
+                                height: 80,
+                                width: 150,
+                                color: Color.fromARGB(164, 0, 0, 0),
+                                child: Text(
+                                  "Uefa urges referecees TO protect players",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "12.30 Well",
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            Text(
+                              "All",
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Next match",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        NowScoreWidget(
+                            amorpm: 'am',
+                            team1: snapshot.data!.docs[0]['Team One Name'],
+                            team2: snapshot.data!.docs[0]['Team Two Name'],
+                            team1Image: snapshot.data!.docs[0]['Team One Logo'],
+                            team2Image: snapshot.data!.docs[0]['Team Two Logo'],
+                            time: snapshot.data!.docs[0]['Time']),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Score",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            // physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 1,
+                            itemBuilder: (context, index) {
+                              return ScoreCard(
+                                  imageurl2: nowPlaying.data!.docs[0]
+                                      ['Team two logo'],
+                                  imageurl1: nowPlaying.data!.docs[0]
+                                      ['Team one logo'],
+                                  score1: nowPlaying.data!.docs[0]
+                                      ['Team one score'],
+                                  score2: nowPlaying.data!.docs[0]
+                                      ['Team two score'],
+                                  teamname2: nowPlaying.data!.docs[0]
+                                      ['Team two name'],
+                                  teamname: nowPlaying.data!.docs[0]
+                                      ['Team one name']);
+                            },
+                          ),
+                        )
+                      ]),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(color: Colors.yellow),
+                    );
+                  }
+                });
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 110, left: 20),
-              child: Container(
-                height: 80,
-                width: 150,
-                color: Color.fromARGB(164, 0, 0, 0),
-                child: Text(
-                  "Uefa urges referecees TO protect players",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            )
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "12.30 Well",
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400),
-            ),
-            Text(
-              "All",
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Next match",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        NowScoreWidget(
-            amorpm: 'am',
-            team1: 'Fulham',
-            team2: 'Chelsea',
-            team1Image:
-                'https://ssl.gstatic.com/onebox/media/sports/logos/Gh7_5p3n364p4vxeM8FhNg_96x96.png',
-            team2Image:
-                'https://ssl.gstatic.com/onebox/media/sports/logos/fhBITrIlbQxhVB6IjxUO6Q_96x96.png',
-            time: '1:30'),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Score",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            // physics: const NeverScrollableScrollPhysics(),
-            itemCount: 1,
-            itemBuilder: (context, index) {
-              return ScoreCard(
-                  imageurl2:
-                      'https://ssl.gstatic.com/onebox/media/sports/logos/fhBITrIlbQxhVB6IjxUO6Q_96x96.png',
-                  imageurl1:
-                      'https://ssl.gstatic.com/onebox/media/sports/logos/z44l-a0W1v5FmgPnemV6Xw_96x96.png',
-                  score1: '1',
-                  score2: '0',
-                  teamname2: 'Chelsea',
-                  teamname: 'Man city');
-            },
-          ),
-        )
-      ]),
-    );
+            );
+          }
+        });
   }
 }
